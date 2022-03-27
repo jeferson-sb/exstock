@@ -25,3 +25,7 @@ exstock-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 *.swp
+
+# Environment Variables
+config/*.exs
+!config/config.exs

@@ -13,6 +13,6 @@ defmodule Exstock do
 
   """
   def hello do
-    :world
+    :wip
   end
 end

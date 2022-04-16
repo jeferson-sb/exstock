@@ -1,14 +1,15 @@
 defmodule Exstock.Supervisor do
   use Supervisor
 
-  def start_link do
-    Supervisor.start_link(__MODULE__, [])
+  def start_link(opts \\ []) do
+    Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
   @impl true
-  def init(_) do
+  def init(:ok) do
     children = [
-      Exstock.Worker
+      Exstock.Worker,
+      Exstock.Scheduler
     ]
 
     opts = [strategy: :one_for_one]

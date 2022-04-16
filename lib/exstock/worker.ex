@@ -1,6 +1,5 @@
 defmodule Exstock.Worker do
   @name MyWorker
-  @two_hr 2 * 60 * 60 * 1000
 
   use GenServer
 
@@ -32,9 +31,7 @@ defmodule Exstock.Worker do
 
   @impl true
   def handle_cast({:symbol, symbol}, state) do
-    IO.inspect(state)
-
-    case Exstock.Query.get_quote(symbol) do
+    case Exstock.Query.quote(symbol) do
       {:ok, data} ->
         {:noreply, [data | state]}
 
@@ -44,11 +41,12 @@ defmodule Exstock.Worker do
   end
 
   @impl true
-  def terminate(reason, state) do
-    IO.puts("Reason: #{inspect(reason)}; State: #{inspect(state)}")
+  def handle_info(:work, state) do
+    state
   end
 
-  def schedule do
-    Process.send_after(self(), :work, @two_hr)
+  @impl true
+  def terminate(reason, state) do
+    IO.puts("Reason: #{inspect(reason)}; State: #{inspect(state)}")
   end
 end

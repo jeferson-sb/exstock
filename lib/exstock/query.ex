@@ -64,11 +64,10 @@ defmodule Exstock.Query do
       "regularMarketDayLow" => low,
       "postMarketPrice" => closePrice,
       "regularMarketPrice" => price,
-      "shortName" => name,
-      "quoteType" => type
+      "shortName" => name
     } = data
 
-    %{high: high, low: low, closePrice: closePrice, price: price, name: name, type: type}
+    %{high: high, low: low, closePrice: closePrice, price: price, name: name, type: "STOCK"}
   end
 
   defp process_fields(data = %{"quoteType" => "CRYPTOCURRENCY"}) do
@@ -76,10 +75,9 @@ defmodule Exstock.Query do
       "regularMarketDayHigh" => high,
       "regularMarketDayLow" => low,
       "regularMarketPrice" => price,
-      "shortName" => name,
-      "quoteType" => type
+      "shortName" => name
     } = data
 
-    %{high: high, low: low, price: price, name: name, type: type}
+    %{high: high, low: low, price: price, name: name, type: "CRYPTO"}
   end
 end

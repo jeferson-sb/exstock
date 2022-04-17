@@ -5,8 +5,10 @@ defmodule Exstock.Portfolio do
 
   import Ratatouille.View
   import Ratatouille.Constants, only: [key: 1]
+  import Number.Currency
 
   @spacebar key(:space)
+  @enter key(:enter)
 
   @delete_keys [
     key(:delete),
@@ -14,6 +16,7 @@ defmodule Exstock.Portfolio do
     key(:backspace2)
   ]
 
+  @ctrl_l Ratatouille.Constants.key(:ctrl_l)
   @up key(:arrow_up)
   @down key(:arrow_down)
   @left key(:arrow_left)
@@ -23,14 +26,19 @@ defmodule Exstock.Portfolio do
   def init(_context) do
     %{
       local_time: :calendar.local_time(),
-      search_term: ""
+      search_term: "",
+      results: [],
+      errors: ""
     }
   end
 
   def update(model, message) do
     case message do
-      {:event, %{key: :enter}} ->
-        IO.inspect("hi")
+      {:event, %{key: @enter}} ->
+        Exstock.Worker.add_quote(model.search_term)
+        quotes = Exstock.Worker.get_quote()
+
+        Map.put(model, :results, Enum.concat([quotes, model.results]))
 
       {:event, %{key: key}} when key in @delete_keys ->
         current = String.slice(model.search_term, 0..-2)
@@ -41,6 +49,9 @@ defmodule Exstock.Portfolio do
 
       {:event, %{ch: ch}} when ch > 0 ->
         Map.put(model, :search_term, model.search_term <> <<ch::utf8>>)
+
+      {:event, %{key: @ctrl_l}} ->
+        %{model | results: [], search_term: ""}
 
       :tick ->
         %{
@@ -62,6 +73,21 @@ defmodule Exstock.Portfolio do
     Calendar.strftime(dt, "%Y-%m-%d %H:%M:%S %p")
   end
 
+  defp render_search_row(model) do
+    row =
+      for item <- model.results do
+        table_row do
+          table_cell(content: Number.Currency.number_to_currency(item.high), color: :green)
+          table_cell(content: Number.Currency.number_to_currency(item.low), color: :red)
+          table_cell(content: Number.Currency.number_to_currency(item.price))
+          table_cell(content: to_string(item.name))
+          table_cell(content: to_string(item.type))
+        end
+      end
+
+    row
+  end
+
   def render(model) do
     top_bar =
       bar do
@@ -80,8 +106,22 @@ defmodule Exstock.Portfolio do
 
       row do
         column size: 12 do
-          panel title: "Search stock/crypto" do
+          panel title: "Search stock/crypto (Ctrl-L to clear)" do
             label(content: model.search_term <> "▌")
+
+            if length(model.results) > 0 do
+              table do
+                table_row do
+                  table_cell(content: "high", attributes: [:bold, :underline])
+                  table_cell(content: "low", attributes: [:bold, :underline])
+                  table_cell(content: "price", attributes: [:bold, :underline])
+                  table_cell(content: "name", attributes: [:bold, :underline])
+                  table_cell(content: "type", attributes: [:bold, :underline])
+                end
+
+                render_search_row(model)
+              end
+            end
           end
         end
       end
@@ -95,8 +135,8 @@ defmodule Exstock.Portfolio do
               table_row do
                 table_cell(content: "high", attributes: [:bold, :underline])
                 table_cell(content: "low", attributes: [:bold, :underline])
-                table_cell(content: "close_price", attributes: [:bold, :underline])
-                table_cell(content: "symbol", attributes: [:bold, :underline])
+                table_cell(content: "price", attributes: [:bold, :underline])
+                table_cell(content: "name", attributes: [:bold, :underline])
                 table_cell(content: "type", attributes: [:bold, :underline])
               end
 
@@ -135,8 +175,8 @@ defmodule Exstock.Portfolio do
       end
 
       row do
-        column size: 4 do
-          panel title: "Insights", color: :cyan do
+        column size: 8 do
+          panel title: "Insights", color: :magenta do
             label(content: "-")
           end
         end
@@ -144,6 +184,8 @@ defmodule Exstock.Portfolio do
     end
   end
 end
+
+Exstock.Supervisor.start_link()
 
 Ratatouille.run(Exstock.Portfolio,
   quit_events: [

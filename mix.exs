@@ -23,7 +23,8 @@ defmodule Exstock.MixProject do
     [
       {:httpoison, "~> 1.8.0"},
       {:json, "~> 1.4"},
-      {:ratatouille, "~> 0.5.0"}
+      {:ratatouille, "~> 0.5.0"},
+      {:number, "~> 1.0.1"}
     ]
   end
 end

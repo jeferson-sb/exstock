@@ -28,6 +28,7 @@ defmodule Exstock.Portfolio do
       local_time: :calendar.local_time(),
       search_term: "",
       results: [],
+      wallet: [],
       errors: ""
     }
   end
@@ -88,6 +89,23 @@ defmodule Exstock.Portfolio do
     row
   end
 
+  defp render_row(model) do
+    rows =
+      for item <- model.wallet do
+        {:ok, stock} = Exstock.Query.quote(item)
+
+        table_row do
+          table_cell(content: Number.Currency.number_to_currency(stock.high), color: :green)
+          table_cell(content: Number.Currency.number_to_currency(stock.low), color: :red)
+          table_cell(content: Number.Currency.number_to_currency(stock.price))
+          table_cell(content: to_string(stock.name))
+          table_cell(content: to_string(stock.type))
+        end
+      end
+
+    rows
+  end
+
   def render(model) do
     top_bar =
       bar do
@@ -140,28 +158,8 @@ defmodule Exstock.Portfolio do
                 table_cell(content: "type", attributes: [:bold, :underline])
               end
 
-              table_row do
-                table_cell(content: "171.27", color: :green)
-                table_cell(content: "165.05", color: :red)
-                table_cell(content: "165.06")
-                table_cell(content: "AAPL")
-                table_cell(content: "Stock")
-              end
-
-              table_row do
-                table_cell(content: "1012.71", color: :green)
-                table_cell(content: "982.25", color: :red)
-                table_cell(content: "989.5")
-                table_cell(content: "TSLA")
-                table_cell(content: "Stock")
-              end
-
-              table_row do
-                table_cell(content: "3117.94", color: :green)
-                table_cell(content: "3029.435", color: :red)
-                table_cell(content: "3034.0")
-                table_cell(content: "AMZN")
-                table_cell(content: "Stock")
+              if length(model.wallet) > 0 do
+                render_row(model)
               end
             end
           end

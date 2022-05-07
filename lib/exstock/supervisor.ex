@@ -9,7 +9,8 @@ defmodule Exstock.Supervisor do
   def init(:ok) do
     children = [
       Exstock.Worker,
-      Exstock.Scheduler
+      Exstock.Scheduler,
+      Exstock.Alert
     ]
 
     opts = [strategy: :one_for_one]

@@ -36,6 +36,10 @@ defmodule Exstock.Query do
     body |> JSON.decode!()
   end
 
+  defp parse_response({:ok, %HTTPoison.Response{body: body, status_code: 429}}) do
+    body |> JSON.decode!()
+  end
+
   defp parse_response({:error, response}) do
     {:error, response}
   end
@@ -56,6 +60,10 @@ defmodule Exstock.Query do
     rescue
       exception -> {:error, exception}
     end
+  end
+
+  defp process_quote(%{"message" => response_message}) do
+    {:error, response_message}
   end
 
   defp process_fields(data = %{"quoteType" => "EQUITY"}) do

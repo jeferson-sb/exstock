@@ -1,13 +1,14 @@
 defmodule Exstock.Scheduler do
   use GenServer
 
-  @ten_seconds 10 * 1000
+  @half_hour 30 * 60 * 1000
+  @hourly 60 * 60 * 1000
 
   def start_link(opts \\ [name: __MODULE__]) do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
-  def quote(symbol, recurring_at \\ @ten_seconds) do
+  def quote(symbol, recurring_at \\ @half_hour) do
     GenServer.cast(__MODULE__, {:symbol, symbol, :timing, recurring_at})
   end
 
@@ -40,11 +41,9 @@ defmodule Exstock.Scheduler do
 
   @impl true
   def handle_info(:tick, state) do
-    IO.inspect(state.data)
-
     Exstock.Portfolio.watch(state.data.symbol, state.data.price)
 
-    Process.send_after(self(), :tick, @ten_seconds)
+    Process.send_after(self(), :tick, @half_hour)
 
     {:noreply, state}
   end

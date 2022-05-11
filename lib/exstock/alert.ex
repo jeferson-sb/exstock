@@ -49,6 +49,11 @@ defmodule Exstock.Alert do
   end
 
   @impl true
+  def handle_call(:retrieve, _from, []) do
+    {:reply, "No alerts at the moment.", []}
+  end
+
+  @impl true
   def handle_cast({:add, alert}, state) do
     {:noreply, [alert | state]}
   end

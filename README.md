@@ -5,7 +5,7 @@
 
 Exstock is a simple elixir terminal application to watch and get alerts on stock/crypto prices periodically.
 
-![alt mockup](./github/mockup.png)
+![alt mockup](./.github/mockup.png)
 
 ## Quick start
 

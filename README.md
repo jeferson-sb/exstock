@@ -1,21 +1,36 @@
 # Exstock
 
-**TODO: Add description**
+![Elixir](https://img.shields.io/badge/elixir-v1.13-brightgreen?style=flat-square&logo=elixir)
+![License](https://img.shields.io/github/license/jeferson-sb/exstock?style=flat-square)
 
-## Installation
+Exstock is a simple elixir terminal application to watch and get alerts on stock/crypto prices periodically.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `exstock` to your list of dependencies in `mix.exs`:
+![alt mockup](./github/mockup.png)
 
-```elixir
-def deps do
-  [
-    {:exstock, "~> 0.1.0"}
-  ]
-end
+## Quick start
+
+- Fill out your credentials on `config.exs`
+
+Install dependencies
+
+```sh
+$ mix deps.get
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/exstock>.
+Run GUI
 
+```sh
+$ mix run lib/exstock/gui.exs
+```
+
+## Escript
+
+TBD
+
+## Tests
+
+TBD
+
+## License
+
+This project is under the [MIT license](https://github.com/jeferson-sb/exstock/blob/main/LICENSE)

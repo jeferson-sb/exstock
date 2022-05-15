@@ -22,6 +22,13 @@ defmodule Exstock.Query do
     |> parse_response()
   end
 
+  def insights(symbol) do
+    "#{@apiurl}/ws/insights/v1/finance/insights?symbol=#{symbol}"
+    |> HTTPoison.get([{"Accept", "application/json"}, {"X-API-KEY", @apikey}])
+    |> parse_response()
+    |> process_insight()
+  end
+
   defp url_for(symbol, params \\ [region: "US", lang: "en"]) do
     [region: region, lang: lang] = params
 
@@ -64,6 +71,20 @@ defmodule Exstock.Query do
 
   defp process_quote(%{"message" => response_message}) do
     {:error, response_message}
+  end
+
+  defp process_quote({:error, httpError}) do
+    {:error, httpError}
+  end
+
+  defp process_insight(%{"finance" => response}) do
+    %{
+      "companySnapshot" => company,
+      "instrumentInfo" => stats,
+      "symbol" => symbol
+    } = response["result"]
+
+    %{company: company, stats: stats, symbol: symbol}
   end
 
   defp process_fields(data = %{"quoteType" => "EQUITY"}) do

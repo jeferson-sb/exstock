@@ -29,7 +29,10 @@ defmodule Exstock.Portfolio do
       search_term: "",
       results: [],
       wallet: [],
-      errors: ""
+      notification: "",
+      errors: "",
+      prefered_asset: "AAPL",
+      insights: %{}
     }
   end
 
@@ -60,13 +63,19 @@ defmodule Exstock.Portfolio do
           | local_time: :calendar.local_time()
         }
 
+      :longer_tick ->
+        %{model | notification: Exstock.Alert.retrieve()}
+
       _ ->
         model
     end
   end
 
   def subscribe(_model) do
-    Subscription.interval(1000, :tick)
+    Subscription.batch([
+      Subscription.interval(1000, :tick),
+      Subscription.interval(5000, :longer_tick)
+    ])
   end
 
   defp formatted_datetime(local_time) do
@@ -78,9 +87,9 @@ defmodule Exstock.Portfolio do
     row =
       for item <- model.results do
         table_row do
-          table_cell(content: Number.Currency.number_to_currency(item.high), color: :green)
-          table_cell(content: Number.Currency.number_to_currency(item.low), color: :red)
-          table_cell(content: Number.Currency.number_to_currency(item.price))
+          table_cell(content: number_to_currency(item.high), color: :green)
+          table_cell(content: number_to_currency(item.low), color: :red)
+          table_cell(content: number_to_currency(item.price))
           table_cell(content: to_string(item.name))
           table_cell(content: to_string(item.type))
         end
@@ -95,15 +104,39 @@ defmodule Exstock.Portfolio do
         {:ok, stock} = Exstock.Query.quote(item)
 
         table_row do
-          table_cell(content: Number.Currency.number_to_currency(stock.high), color: :green)
-          table_cell(content: Number.Currency.number_to_currency(stock.low), color: :red)
-          table_cell(content: Number.Currency.number_to_currency(stock.price))
+          table_cell(content: number_to_currency(stock.high), color: :green)
+          table_cell(content: number_to_currency(stock.low), color: :red)
+          table_cell(content: number_to_currency(stock.price))
           table_cell(content: to_string(stock.name))
           table_cell(content: to_string(stock.type))
         end
       end
 
     rows
+  end
+
+  defp render_insights(%{company: company, stats: stats} = insights) do
+    tree do
+      tree_node(content: "Stats", color: :blue) do
+        tree_node(content: "Sector: #{company["sectorInfo"]}")
+
+        tree_node(content: "Stop loss: #{stats["keyTechnicals"]["stopLoss"]}")
+
+        tree_node(content: "Support/Resistance at #{stats["keyTechnicals"]["support"]}")
+
+        tree_node(content: "Symptoms by - #{stats["technicalEvents"]["provider"]}") do
+          tree_node(content: "short - #{stats["technicalEvents"]["shortTerm"]}")
+
+          tree_node(content: "mid - #{stats["technicalEvents"]["midTerm"]}")
+
+          tree_node(content: "long - #{stats["technicalEvents"]["longTerm"]}")
+        end
+      end
+    end
+  end
+
+  defp render_insights(%{}) do
+    label(content: "-")
   end
 
   def render(model) do
@@ -167,15 +200,15 @@ defmodule Exstock.Portfolio do
 
         column size: 4 do
           panel title: "Notifications", color: :blue do
-            label(content: "-")
+            label(content: model.notification)
           end
         end
       end
 
       row do
         column size: 8 do
-          panel title: "Insights", color: :magenta do
-            label(content: "-")
+          panel title: "🔍 Insights for: " <> model.prefered_asset, color: :magenta do
+            render_insights(model.insights)
           end
         end
       end
@@ -184,6 +217,7 @@ defmodule Exstock.Portfolio do
 end
 
 Exstock.Supervisor.start_link()
+Exstock.Scheduler.quote("AAPL")
 
 Ratatouille.run(Exstock.Portfolio,
   quit_events: [

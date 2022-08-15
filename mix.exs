@@ -5,7 +5,7 @@ defmodule Exstock.MixProject do
     [
       app: :exstock,
       version: "0.1.0",
-      elixir: "~> 1.13",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -24,7 +24,8 @@ defmodule Exstock.MixProject do
       {:httpoison, "~> 1.8.0"},
       {:json, "~> 1.4"},
       {:ratatouille, "~> 0.5.0"},
-      {:number, "~> 1.0.1"}
+      {:number, "~> 1.0.1"},
+      {:ecto_sqlite3, "~> 0.7.4"}
     ]
   end
 end

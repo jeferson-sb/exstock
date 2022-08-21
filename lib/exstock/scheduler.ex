@@ -31,7 +31,7 @@ defmodule Exstock.Scheduler do
 
     Process.send_after(self(), :tick, timing)
 
-    {:noreply, %{last_run_at: :calendar.local_time(), data: %{data | "symbol" => symbol}}}
+    {:noreply, %{last_run_at: :calendar.local_time(), data: Map.put(data, :symbol, "AAPL")}}
   end
 
   @impl true

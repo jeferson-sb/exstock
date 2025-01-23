@@ -1,6 +1,6 @@
-defmodule Exstock do
+defmodule Tui do
   @moduledoc """
-  Documentation for `Exstock`.
+  Documentation for `Tui`.
   """
 
   @doc """
@@ -8,11 +8,11 @@ defmodule Exstock do
 
   ## Examples
 
-      iex> Exstock.hello()
+      iex> Tui.hello()
       :world
 
   """
   def hello do
-    :wip
+    :world
   end
 end

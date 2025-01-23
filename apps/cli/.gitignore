@@ -20,16 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-exstock-*.tar
+cli-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
-*.swp
-
-# Environment Variables
-config/*.exs
-!config/config.exs
-
-# sqlite3
-*.sqlite3
-*.db

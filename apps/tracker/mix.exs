@@ -18,7 +18,8 @@ defmodule Tracker.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      mod: {Tracker.Application, []},
+      extra_applications: [:logger, :httpoison]
     ]
   end
 
@@ -26,11 +27,10 @@ defmodule Tracker.MixProject do
   defp deps do
     [
       {:httpoison, "~> 2.0"},
-      {:json, "~> 1.4"},
       {:number, "~> 1.0.1"},
       {:ecto_sqlite3, "~> 0.17"},
       {:igniter, "~> 0.5"},
-      {:oban, "~> 2.0"}
+      {:oban, "~> 2.18"}
     ]
   end
 end

@@ -16,8 +16,10 @@ config :tracker, Tracker.Repo,
   database: "./database.db"
 
 config :tracker,
-  finance_apiurl: "",
-  finance_apikey: "",
+  primary_finance_api_url: "",
+  primary_finance_api_key: "",
+  secondary_finance_api_url: "",
+  secondary_finance_api_key: "",
   ecto_repos: [Tracker.Repo]
 
 import_config "#{config_env()}.exs"

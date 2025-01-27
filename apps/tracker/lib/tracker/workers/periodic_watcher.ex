@@ -1,14 +1,10 @@
 defmodule Tracker.PeriodicWatcher do
   use Oban.Worker
-  alias Tracker.Repo
   require Logger
-  import Ecto.Query
 
   @impl Oban.Worker
   def perform(job) do
-    Tracker.Watchlist
-    |> where(enabled: true)
-    |> Repo.all
+    Tracker.Watchlist.Repo.get_all_by(enabled: true)
     |> Enum.reduce([], fn watchlist, acc ->
       Logger.info("Checking watchlist: #{watchlist.symbol}")
       case Tracker.Watcher.watch(watchlist.condition, get_hot_price(watchlist.symbol)) do

@@ -5,7 +5,7 @@ defmodule Tracker.Wallet do
   schema "wallets" do
     field :name, :string
     belongs_to :portfolio, Tracker.Portfolio
-    has_many :assets, Tracker.Asset
+    has_many :assets, Tracker.Asset, on_delete: :delete_all
   end
 
   def changeset(struct, params) do

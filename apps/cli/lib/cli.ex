@@ -9,6 +9,7 @@ defmodule Cli do
       portfolio:create - Create a portfolio
       wallet:create - Create a wallet and assets
       wallet:list - List wallets
+      wallet:remove - Remove a wallet
       watchlist:list - List watchlists
       watchlist:add - Add a watchlist
       watchlist:disable - Disable a watchlist for being tracked
@@ -38,6 +39,19 @@ defmodule Cli do
     Prompt.display "Listing wallets...", [color: :yellow]
     Commands.WalletList.execute()
     |> Helpers.WalletTable.format()
+  end
+
+  defp process([wallet: :remove]) do
+    wallets = Commands.WalletList.execute()
+    wallet_id = Prompt.select(
+      "Which wallet you want to remove?",
+      wallets |> Enum.map(fn w -> {w.name, w.id} end)
+    )
+
+    Enum.find(wallets, fn wallet -> wallet.id == wallet_id end)
+    |> Commands.WalletRemove.execute
+
+    Prompt.display "\nWallet for '#{wallet_id}' successfully removed!", [color: :green]
   end
 
   defp process([watchlist: :list]) do
@@ -87,6 +101,7 @@ defmodule Cli do
       { _, ["portfolio:create"], _, } -> [portfolio: :create]
       { _, ["wallet:create"], _, } -> [wallet: :create]
       { _, ["wallet:list"], _, } -> [wallet: :list]
+      { _, ["wallet:remove"], _, } -> [wallet: :remove]
       { _, ["watchlist:list"], _, } -> [watchlist: :list]
       { _, ["watchlist:add"], _, } -> [watchlist: :add]
       { _, ["watchlist:disable"], _, } -> [watchlist: :disable]

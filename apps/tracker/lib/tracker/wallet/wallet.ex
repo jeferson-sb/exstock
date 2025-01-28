@@ -10,7 +10,7 @@ defmodule Tracker.Wallet do
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:name])
-    |> validate_required([:name])
+    |> cast(params, [:name, :portfolio_id])
+    |> validate_required([:name, :portfolio_id])
   end
 end

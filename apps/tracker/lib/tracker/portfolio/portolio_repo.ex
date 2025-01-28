@@ -1,6 +1,10 @@
 defmodule Tracker.Portfolio.Repo do
   alias Tracker.Repo
 
+  def all do
+    Repo.all(Tracker.Portfolio)
+  end
+
   def create(params) do
     Tracker.Portfolio.changeset(%Tracker.Portfolio{}, params)
     |> Repo.insert

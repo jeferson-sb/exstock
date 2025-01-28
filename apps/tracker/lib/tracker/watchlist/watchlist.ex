@@ -11,7 +11,7 @@ defmodule Tracker.Watchlist do
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:symbol, :condition, :enabled])
+    |> cast(params, [:symbol, :condition, :enabled, :portfolio_id])
     |> validate_length(:symbol, min: 3)
   end
 end

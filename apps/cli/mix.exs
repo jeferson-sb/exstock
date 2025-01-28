@@ -11,7 +11,8 @@ defmodule Cli.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      escript: [main_module: Cli]
     ]
   end
 
@@ -22,6 +23,10 @@ defmodule Cli.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:prompt, "~> 0.10.1-rc1"},
+      {:number, "~> 1.0.1"},
+      {:tracker, in_umbrella: true},
+    ]
   end
 end

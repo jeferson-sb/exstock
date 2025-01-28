@@ -2,6 +2,10 @@ defmodule Tracker.Watchlist.Repo do
   alias Tracker.Repo
   import Ecto.Query
 
+  def all do
+    Repo.all(Tracker.Watchlist)
+  end
+
   def get_by(params) do
     Tracker.Watchlist
     |> Repo.get_by(params)

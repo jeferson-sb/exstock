@@ -9,7 +9,7 @@ defmodule Tracker.Asset do
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:name, :symbol])
-    |> validate_required([:name, :symbol])
+    |> cast(params, [:name, :symbol, :wallet_id])
+    |> validate_required([:name, :symbol, :wallet_id])
   end
 end

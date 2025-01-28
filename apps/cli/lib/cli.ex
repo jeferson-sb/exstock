@@ -8,6 +8,7 @@ defmodule Cli do
     Usage:
       portfolio:create - Create a portfolio
       wallet:create - Create a wallet and assets
+      wallet:list - List wallets
       watchlist:list - List watchlists
       watchlist:add - Add a watchlist
       watchlist:disable - Disable a watchlist for being tracked
@@ -33,6 +34,12 @@ defmodule Cli do
     Prompt.display "\n'#{name}' successfully created!", [color: :green]
   end
 
+  defp process([wallet: :list]) do
+    Prompt.display "Listing wallets...", [color: :yellow]
+    Commands.WalletList.execute()
+    |> Helpers.WalletTable.format()
+  end
+
   defp process([watchlist: :list]) do
     Prompt.display "Listing watchlists...", [color: :yellow]
     Commands.WatchlistList.execute()
@@ -55,6 +62,16 @@ defmodule Cli do
   end
 
   defp process([watchlist: :disable]) do
+    Prompt.display "Listing active watchlists...", [color: :yellow]
+
+    watchlists = Commands.WatchlistList.execute([enabled: true])
+    watchlist_ids = watchlists |> Enum.map(fn w -> {w.symbol, w.id} end)
+    watchlist_id = Prompt.select("Which watchlist you want to disable?", watchlist_ids)
+
+    Enum.find(watchlists, fn w -> w.id == watchlist_id end)
+    |> Commands.WatchlistDisable.execute()
+
+    Prompt.display "\nWatchlist for '#{watchlist_id}' successfully disabled!", [color: :green]
   end
 
   defp parse_args(args) do
@@ -69,6 +86,7 @@ defmodule Cli do
         :help
       { _, ["portfolio:create"], _, } -> [portfolio: :create]
       { _, ["wallet:create"], _, } -> [wallet: :create]
+      { _, ["wallet:list"], _, } -> [wallet: :list]
       { _, ["watchlist:list"], _, } -> [watchlist: :list]
       { _, ["watchlist:add"], _, } -> [watchlist: :add]
       { _, ["watchlist:disable"], _, } -> [watchlist: :disable]

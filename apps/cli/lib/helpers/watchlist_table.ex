@@ -9,11 +9,11 @@ defmodule Helpers.WatchlistTable do
       ]
     end)
 
-    Prompt.table([
+    Enum.concat([
       ["SYMBOL", "CONDITION", "ENABLED"],
       ["--", "--", "--"],
-      List.flatten(table)
-    ])
+    ], table)
+    |> Prompt.table
   end
 
   defp format_currency(n), do: Number.Currency.number_to_currency(n)

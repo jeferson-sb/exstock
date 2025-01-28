@@ -1,5 +1,10 @@
 defmodule Tracker.Wallet.Repo do
   alias Tracker.Repo
+  import Ecto.Query
+
+  def all do
+    Repo.all(from w in Tracker.Wallet, preload: [:portfolio, :assets])
+  end
 
   def create(params) do
     Tracker.Wallet.changeset(%Tracker.Wallet{}, params)

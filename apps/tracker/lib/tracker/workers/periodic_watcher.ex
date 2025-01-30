@@ -7,15 +7,17 @@ defmodule Tracker.PeriodicWatcher do
     Tracker.Watchlist.Repo.get_all_by(enabled: true)
     |> Enum.reduce([], fn watchlist, acc ->
       Logger.info("Checking watchlist: #{watchlist.symbol}")
+
       case Tracker.Watcher.watch(watchlist.condition, get_hot_price(watchlist.symbol)) do
         nil -> acc
         result -> [{watchlist.symbol, result} | acc]
       end
     end)
     |> Enum.map(fn {symbol, condition} ->
-      Tracker.Alert.message(symbol, condition)
+      Tracker.AlertMessage.message(symbol, condition)
     end)
-    |> IO.inspect # TODO: remove in favor or notification system triggering
+    # TODO: remove in favor or notification system triggering
+    |> IO.inspect()
 
     {:ok, job}
   end

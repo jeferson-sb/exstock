@@ -32,33 +32,11 @@ defmodule Tui do
     {model, update_cmd(model)}
   end
 
-  defp get_exchange_rates() do
-    exchanges = [["USD", "BRL"], ["USD", "EUR"], ["USD", "JPY"]]
-    Enum.map(exchanges, fn exchange ->
-      [from, to] = exchange
-      {:ok, rate} = Tracker.Query.get_exchange_rate(from, to)
-      rate
-    end)
-  end
-
   defp update_cmd(model) do
     Command.batch([
-      Command.new(fn -> Watchlist.Service.list end, :load_watchlist),
-      Command.new(fn -> get_exchange_rates() end, :load_exchange_rates)
+      Command.new(fn -> Watchlist.Service.execute end, :load_watchlist),
+      Command.new(fn -> ExchangeList.Service.execute end, :load_exchange_rates)
     ])
-  end
-
-  defp formatted_datetime(local_time) do
-    {:ok, dt} = NaiveDateTime.from_erl(local_time)
-    Calendar.strftime(dt, "%Y-%m-%d %H:%M:%S %p")
-  end
-
-  defp formatted_currency(value) do
-    Number.Currency.number_to_currency(value)
-  end
-
-  defp formatted_human(value) do
-    Number.Human.number_to_human(value)
   end
 
   defp render_watchlist_row(model) do
@@ -67,9 +45,9 @@ defmodule Tui do
         table_row do
           table_cell(content: item.symbol)
           table_cell(content: Helpers.Watchlist.format_condition(item.condition))
-          table_cell(content: formatted_currency(elem(item.values, 0)))
-          table_cell(content: formatted_currency(elem(item.values, 1)))
-          table_cell(content: formatted_currency(elem(item.values, 2)))
+          table_cell(content: Helpers.NumberFormat.format_currency(elem(item.values, 0)))
+          table_cell(content: Helpers.NumberFormat.format_currency(elem(item.values, 1)))
+          table_cell(content: Helpers.NumberFormat.format_currency(elem(item.values, 2)))
         end
       end
 
@@ -92,7 +70,7 @@ defmodule Tui do
       for item <- model.exchange_rates do
         table_row do
           table_cell(content: item["symbol"])
-          table_cell(content: formatted_currency(item["rate"]))
+          table_cell(content: Helpers.NumberFormat.format_currency(item["rate"]))
         end
       end
 
@@ -103,17 +81,17 @@ defmodule Tui do
     tree do
       tree_node(content: "Market", color: :blue) do
         tree_node(content: "Name: #{stats["name"]}")
-        tree_node(content: "Volume: #{formatted_human(stats["average_volume"])}")
-        tree_node(content: "Close: #{formatted_currency(stats["close"])}")
-        tree_node(content: "Open: #{formatted_currency(stats["open"])}")
+        tree_node(content: "Volume: #{Helpers.HumanFormat.format_human(stats["average_volume"])}")
+        tree_node(content: "Close: #{Helpers.NumberFormat.format_currency(stats["close"])}")
+        tree_node(content: "Open: #{Helpers.NumberFormat.format_currency(stats["open"])}")
         tree_node(content: "52 Week: #{stats["fifty_two_week"]["low"]} -> #{stats["fifty_two_week"]["high"]}")
 
         tree_node(content: "Company", color: :red, background: :black) do
           tree_node(content: "Industry -  #{company["Industry"]}")
           tree_node(content: "Dividend Yield % - #{company["DividendYield"]}")
-          tree_node(content: "Revenue - #{formatted_human(company["RevenueTTM"])}")
-          tree_node(content: "Market Cap - #{formatted_human(company["MarketCapitalization"])}")
-          tree_node(content: "EBITDA - #{formatted_human(company["EBITDA"])}")
+          tree_node(content: "Revenue - #{Helpers.HumanFormat.format_human(company["RevenueTTM"])}")
+          tree_node(content: "Market Cap - #{Helpers.HumanFormat.format_human(company["MarketCapitalization"])}")
+          tree_node(content: "EBITDA - #{Helpers.HumanFormat.format_human(company["EBITDA"])}")
         end
       end
     end
@@ -167,7 +145,7 @@ defmodule Tui do
             content: "Exstock 1.0.0 (CTRL-Q to quit)",
             attributes: [:bold]
           )
-          text(content: " 🕗 " <> " " <> formatted_datetime(model.local_time))
+          text(content: " 🕗 " <> " " <> Helpers.DatetimeFormat.format_datetime(model.local_time))
         end
       end
 

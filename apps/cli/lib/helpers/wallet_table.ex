@@ -15,7 +15,7 @@ defmodule Helpers.WalletTable do
     |> Prompt.table()
   end
 
-  def format_row(wallet) when is_nil(wallet.portfolio) do
+  defp format_row(wallet) when is_nil(wallet.portfolio) do
     [
       Integer.to_string(wallet.id),
       wallet.name,
@@ -24,7 +24,7 @@ defmodule Helpers.WalletTable do
     ]
   end
 
-  def format_row(wallet) do
+  defp format_row(wallet) do
     [
       Integer.to_string(wallet.id),
       wallet.name,

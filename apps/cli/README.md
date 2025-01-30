@@ -1,21 +1,28 @@
 # Cli
 
-**TODO: Add description**
+The CLI is a command line interface for consuming the Tracker core.
+It manages by parsing arguments and handling the apropriate commands while
+prompt the user for input when needed.
 
-## Installation
+## Quick setup
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `cli` to your list of dependencies in `mix.exs`:
+> [!WARNING]  
+> To use the database make sure you had already setup Tracker.
 
-```elixir
-def deps do
-  [
-    {:cli, "~> 0.1.0"}
-  ]
-end
+```bash
+mix deps.get
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/cli>.
+## Usage
 
+```bash
+iex -S mix
+```
+
+```bash
+iex> Cli.main ["-h"]
+iex> Cli.main ["wallet:list"]
+iex> Cli.main ["watchlist:list"]
+iex> Cli.main ["portfolio:create"]
+iex> Cli.main ["wallet:create"]
+```

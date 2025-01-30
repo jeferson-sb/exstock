@@ -1,5 +1,7 @@
 defmodule Helpers.HumanFormat do
+  import Number.Human
+
   def format_human(value) do
-    Number.Human.number_to_human(value)
+    number_to_human(value)
   end
 end

@@ -1,21 +1,17 @@
 # Tui
 
-**TODO: Add description**
+Terminal user interface.
 
-## Installation
+![alt demo mockup](../../.github/mockup.png)
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `tui` to your list of dependencies in `mix.exs`:
+## Quick setup
 
-```elixir
-def deps do
-  [
-    {:tui, "~> 0.1.0"}
-  ]
-end
+```bash
+mix deps.get
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/tui>.
+## Usage
 
+```bash
+iex> mix run
+```

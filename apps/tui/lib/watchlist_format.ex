@@ -1,5 +1,5 @@
 defmodule Helpers.Watchlist do
-  def format_currency(n), do: Number.Currency.number_to_currency(n)
+  import Helpers.NumberFormat
 
   def format_condition(%{"up" => price}), do: "Up to #{format_currency(price)}"
   def format_condition(%{"down" => price}), do: "Down to #{format_currency(price)}"

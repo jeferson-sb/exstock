@@ -23,7 +23,9 @@ defmodule Tui.MixProject do
 
   defp deps do
     [
-      {:ratatouille, "~> 0.5.1"}
+      {:ratatouille, "~> 0.5.1"},
+      {:tracker, in_umbrella: true},
+      {:number, "~> 1.0.1"}
     ]
   end
 end

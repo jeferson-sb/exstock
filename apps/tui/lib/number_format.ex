@@ -1,5 +1,7 @@
 defmodule Helpers.NumberFormat do
+  import Number.Currency
+
   def format_currency(value) do
-    Number.Currency.number_to_currency(value)
+    number_to_currency(value)
   end
 end

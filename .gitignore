@@ -34,3 +34,6 @@ config/*.exs
 *.sqlite3
 *.db
 *.db-*
+
+# vcr
+vcr_cassettes/

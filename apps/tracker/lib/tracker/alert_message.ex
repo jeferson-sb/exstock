@@ -8,11 +8,11 @@ defmodule Tracker.AlertMessage do
   end
 
   def message(symbol, {:percentage_up, target}) do
-    "#{symbol} is move up % #{format_currency(target)}"
+    "#{symbol} is move up #{format_percentage(target)}"
   end
 
   def message(symbol, {:percentage_down, target}) do
-    "#{symbol} is move down % #{format_currency(target)}"
+    "#{symbol} is move down #{format_percentage(target)}"
   end
 
   def message(symbol, {:range, min, max}) do
@@ -21,5 +21,9 @@ defmodule Tracker.AlertMessage do
 
   defp format_currency(n) do
     Number.Currency.number_to_currency(n)
+  end
+
+  defp format_percentage(n) do
+    Number.Percentage.number_to_percentage(n, precision: 1)
   end
 end

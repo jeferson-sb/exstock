@@ -67,6 +67,9 @@ defmodule Tracker.Query do
       {:ok, %{"data" => [], "meta" => %{"requested" => 1, "returned" => 0}}} ->
         {:error, "Symbol not found"}
 
+      {:ok, %{"code" => 404}} ->
+        {:error, "Symbol not found"}
+
       {:ok, decoded_body} ->
         {:ok, decoded_body}
 

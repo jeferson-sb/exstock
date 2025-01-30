@@ -11,7 +11,13 @@ defmodule Tracker.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      preferred_cli_env: [
+        vcr: :test,
+        "vcr.delete": :test,
+        "vcr.check": :test,
+        "vcr.show": :test
+      ]
     ]
   end
 
@@ -30,7 +36,8 @@ defmodule Tracker.MixProject do
       {:number, "~> 1.0.1"},
       {:ecto_sqlite3, "~> 0.17"},
       {:igniter, "~> 0.5"},
-      {:oban, "~> 2.18"}
+      {:oban, "~> 2.18"},
+      {:exvcr, "~> 0.11", only: :test}
     ]
   end
 end

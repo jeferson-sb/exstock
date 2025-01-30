@@ -8,7 +8,7 @@ config :tracker, Oban,
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
-       {"*/30 9-17 * * *", Tracker.PeriodicWatcher},
+       {"*/30 9-17 * * *", Tracker.PeriodicWatcher}
      ]}
   ]
 

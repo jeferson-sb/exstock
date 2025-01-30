@@ -1,5 +1,5 @@
 defmodule Watchlist.Service do
-  def list do
+  def execute do
     Tracker.Watchlist.Repo.get_all_by(enabled: true)
     |> Enum.map(fn watchlist ->
       {:ok, data} = Tracker.Query.get_latest_symbol(watchlist.symbol)

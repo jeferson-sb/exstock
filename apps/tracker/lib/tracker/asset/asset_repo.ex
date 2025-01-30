@@ -3,13 +3,13 @@ defmodule Tracker.Asset.Repo do
 
   def create(params) do
     Tracker.Asset.changeset(%Tracker.Asset{}, params)
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   def update(asset, params) do
     asset
     |> Tracker.Asset.changeset(params)
-    |> Repo.update
+    |> Repo.update()
   end
 
   def delete(asset) do

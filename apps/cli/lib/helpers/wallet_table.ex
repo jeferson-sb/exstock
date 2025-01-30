@@ -1,14 +1,18 @@
 defmodule Helpers.WalletTable do
   def format(wallets) do
-    table = wallets
-    |> Stream.map(&format_row/1)
-    |> Enum.to_list
+    table =
+      wallets
+      |> Stream.map(&format_row/1)
+      |> Enum.to_list()
 
-    Enum.concat([
-      ["ID", "NAME", "PORTFOLIO", "ASSETS COUNT"],
-      ["--", "--", "--", "--"],
-    ], table)
-    |> Prompt.table
+    Enum.concat(
+      [
+        ["ID", "NAME", "PORTFOLIO", "ASSETS COUNT"],
+        ["--", "--", "--", "--"]
+      ],
+      table
+    )
+    |> Prompt.table()
   end
 
   def format_row(wallet) when is_nil(wallet.portfolio) do

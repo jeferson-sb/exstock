@@ -25,7 +25,7 @@ defmodule Cli.MixProject do
     [
       {:prompt, "~> 0.10.1-rc1"},
       {:number, "~> 1.0.1"},
-      {:tracker, in_umbrella: true},
+      {:tracker, in_umbrella: true}
     ]
   end
 end

@@ -7,13 +7,13 @@ defmodule Tracker.Portfolio.Repo do
 
   def create(params) do
     Tracker.Portfolio.changeset(%Tracker.Portfolio{}, params)
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   def update(portfolio, params) do
     portfolio
     |> Tracker.Portfolio.changeset(params)
-    |> Repo.update
+    |> Repo.update()
   end
 
   def delete(portfolio) do

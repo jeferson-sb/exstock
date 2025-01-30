@@ -3,9 +3,9 @@ defmodule Tracker.Portfolio do
   import Ecto.Changeset
 
   schema "portfolios" do
-    field :name, :string
-    has_many :wallets, Tracker.Wallet
-    has_one :watchlist, Tracker.Watchlist
+    field(:name, :string)
+    has_many(:wallets, Tracker.Wallet)
+    has_one(:watchlist, Tracker.Watchlist)
   end
 
   def changeset(struct, params) do

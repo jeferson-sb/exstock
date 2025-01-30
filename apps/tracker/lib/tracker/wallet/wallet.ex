@@ -3,9 +3,9 @@ defmodule Tracker.Wallet do
   import Ecto.Changeset
 
   schema "wallets" do
-    field :name, :string
-    belongs_to :portfolio, Tracker.Portfolio
-    has_many :assets, Tracker.Asset, on_delete: :delete_all
+    field(:name, :string)
+    belongs_to(:portfolio, Tracker.Portfolio)
+    has_many(:assets, Tracker.Asset, on_delete: :delete_all)
   end
 
   def changeset(struct, params) do

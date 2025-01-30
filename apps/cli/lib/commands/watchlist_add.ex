@@ -3,7 +3,15 @@ defmodule Commands.WatchlistAdd do
 
   @impl true
   def execute([symbol: symbol, condition: condition, portfolio_id: portfolio_id]) do
-    [left | right] = condition |> String.trim |> String.split(" ")
-    Tracker.Watchlist.Repo.create(%{symbol: symbol, condition: %{String.to_atom(left) => right}, portfolio_id: portfolio_id})
+    condition = condition |> String.trim |> String.split(" ") |> parse_condition
+    Tracker.Watchlist.Repo.create(%{symbol: symbol, condition: condition, portfolio_id: portfolio_id})
+  end
+
+  def parse_condition([left, right]) do
+    %{String.to_atom(left) => right}
+  end
+
+  def parse_condition([left | right]) do
+    parse_condition([left, right])
   end
 end

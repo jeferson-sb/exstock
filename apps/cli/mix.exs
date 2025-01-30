@@ -11,8 +11,7 @@ defmodule Cli.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      escript: [main_module: Cli]
+      deps: deps()
     ]
   end
 

@@ -13,7 +13,8 @@ config :tracker, Oban,
   ]
 
 config :tracker, Tracker.Repo,
-  database: "./database.db"
+  database: "./database.db",
+  log: false
 
 config :tracker,
   primary_finance_api_url: "",

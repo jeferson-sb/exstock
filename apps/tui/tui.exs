@@ -2,6 +2,7 @@ defmodule Tui do
   @behaviour Ratatouille.App
 
   alias Ratatouille.Runtime.Subscription
+  alias Ratatouille.Runtime.Command
 
   import Ratatouille.View
   import Ratatouille.Constants, only: [key: 1]
@@ -19,14 +20,16 @@ defmodule Tui do
   @ctrl_l Ratatouille.Constants.key(:ctrl_l)
 
   def init(_) do
-    %{
+    model = %{
       local_time: :calendar.local_time(),
       search_term: "",
       search_results: %{},
-      watchlist: Watchlist.Service.list(),
+      watchlist: [],
       wallets: Tracker.Wallet.Repo.all,
-      exchange_rates: get_exchange_rates(),
+      exchange_rates: [],
     }
+
+    {model, update_cmd(model)}
   end
 
   defp get_exchange_rates() do
@@ -36,6 +39,13 @@ defmodule Tui do
       {:ok, rate} = Tracker.Query.get_exchange_rate(from, to)
       rate
     end)
+  end
+
+  defp update_cmd(model) do
+    Command.batch([
+      Command.new(fn -> Watchlist.Service.list end, :load_watchlist),
+      Command.new(fn -> get_exchange_rates() end, :load_exchange_rates)
+    ])
   end
 
   defp formatted_datetime(local_time) do
@@ -110,10 +120,8 @@ defmodule Tui do
   end
 
   def subscribe(_model) do
-    # FIVE_MINUTES = 5 * 60 * 1000
     Subscription.batch([
-      Subscription.interval(1000, :tick)
-      # Subscription.interval(FIVE_MINUTES, :update_overview),
+      Subscription.interval(1000, :tick),
     ])
   end
 
@@ -138,8 +146,14 @@ defmodule Tui do
       {:event, %{key: @ctrl_l}} ->
         %{model | search_results: %{}, search_term: ""}
 
+      {:load_watchlist, content} ->
+        %{model | watchlist: content }
+
+      {:load_exchange_rates, content} ->
+        %{model | exchange_rates: content }
+
       :tick ->
-      %{ model | local_time: :calendar.local_time() }
+        %{model | local_time: :calendar.local_time() }
 
       _ -> model
     end

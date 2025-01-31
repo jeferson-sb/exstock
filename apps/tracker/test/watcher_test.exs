@@ -15,12 +15,12 @@ defmodule Tracker.WatcherTest do
   end
 
   test "percentage up" do
-    assert Watcher.watch(%{"percentage_up" => [target: 3, base: 100]}, 103) ==
+    assert Watcher.watch(%{"percentage_up" => 3}, 103) ==
              {:percentage_up, 3}
   end
 
   test "percentage down" do
-    assert Watcher.watch(%{"percentage_down" => [target: 5, base: 100]}, 95) ==
+    assert Watcher.watch(%{"percentage_down" => 5}, 100, 95) ==
              {:percentage_down, 5}
   end
 end

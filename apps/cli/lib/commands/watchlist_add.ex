@@ -5,9 +5,12 @@ defmodule Commands.WatchlistAdd do
   def execute(symbol: symbol, condition: condition, portfolio_id: portfolio_id) do
     condition = condition |> String.trim() |> String.split(" ") |> parse_condition
 
+    {:ok, data} = Tracker.Query.get_latest_symbol(symbol)
+
     Tracker.Watchlist.Repo.create(%{
       symbol: symbol,
       condition: condition,
+      base_price: data["close"],
       portfolio_id: portfolio_id
     })
   end

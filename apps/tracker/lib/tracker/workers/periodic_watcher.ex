@@ -8,7 +8,11 @@ defmodule Tracker.PeriodicWatcher do
     |> Enum.reduce([], fn watchlist, acc ->
       Logger.info("Checking watchlist: #{watchlist.symbol}")
 
-      case Tracker.Watcher.watch(watchlist.condition, get_hot_price(watchlist.symbol)) do
+      case Tracker.Watcher.watch(
+             watchlist.condition,
+             watchlist.base_price,
+             get_hot_price(watchlist.symbol)
+           ) do
         nil -> acc
         result -> [{watchlist.symbol, result} | acc]
       end

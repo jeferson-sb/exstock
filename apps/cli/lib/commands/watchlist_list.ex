@@ -6,6 +6,7 @@ defmodule Commands.WatchlistList do
     Tracker.Watchlist.Repo.all()
   end
 
+  @impl true
   def execute(params) do
     Tracker.Watchlist.Repo.get_all_by(params)
   end

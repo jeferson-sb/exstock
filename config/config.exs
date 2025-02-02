@@ -21,6 +21,8 @@ config :tracker,
   primary_finance_api_key: "",
   secondary_finance_api_url: "",
   secondary_finance_api_key: "",
+  resend_api_key: "",
+  user_email: "",
   ecto_repos: [Tracker.Repo]
 
 import_config "#{config_env()}.exs"

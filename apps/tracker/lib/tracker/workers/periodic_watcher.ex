@@ -20,8 +20,7 @@ defmodule Tracker.PeriodicWatcher do
     |> Enum.map(fn {symbol, condition} ->
       Tracker.AlertMessage.message(symbol, condition)
     end)
-    # TODO: remove in favor or notification system triggering
-    |> IO.inspect()
+    |> Tracker.Mailers.WatcherMailer.mail
 
     {:ok, job}
   end

@@ -37,7 +37,8 @@ defmodule Tracker.MixProject do
       {:ecto_sqlite3, "~> 0.17"},
       {:igniter, "~> 0.5"},
       {:oban, "~> 2.18"},
-      {:exvcr, "~> 0.11", only: :test}
+      {:exvcr, "~> 0.11", only: :test},
+      {:resend, "~> 0.4.0"}
     ]
   end
 end

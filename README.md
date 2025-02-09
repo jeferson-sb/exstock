@@ -62,6 +62,16 @@ mix test
 mix format
 ```
 
+## Releasing
+
+```sh
+MIX_ENV=prod mix release tracker
+MIX_ENV=prod mix release tui
+MIX_ENV=prod mix release cli
+
+_build/prod/rel/tracker/bin/tracker start
+```
+
 ## License
 
 This project is under the [MIT license](https://github.com/jeferson-sb/exstock/blob/main/LICENSE)

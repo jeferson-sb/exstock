@@ -4,7 +4,29 @@ defmodule Tracker.PeriodicWatcher do
 
   @impl Oban.Worker
   def perform(job) do
+    wl =
     Tracker.Watchlist.Repo.get_all_by(enabled: true)
+    |> evaluate_watcher
+
+    wl
+    |> Enum.map(fn {_, symbol, condition} ->
+      Tracker.AlertMessage.message(symbol, condition)
+    end)
+    |> Enum.join("\n")
+    |> Tracker.Mailers.WatcherMailer.mail
+
+    wl |> disable_watchers
+
+    {:ok, job}
+  end
+
+  defp disable_watchers(watchlist) do
+    watchlist
+    |> Enum.each(fn {wl, _, _} -> Tracker.Watchlist.Repo.disable(wl) end)
+  end
+
+  defp evaluate_watcher(wl) do
+    wl
     |> Enum.reduce([], fn watchlist, acc ->
       Logger.info("Checking watchlist: #{watchlist.symbol}")
 
@@ -14,15 +36,9 @@ defmodule Tracker.PeriodicWatcher do
              get_hot_price(watchlist.symbol)
            ) do
         nil -> acc
-        result -> [{watchlist.symbol, result} | acc]
+        result -> [{watchlist, watchlist.symbol, result} | acc]
       end
     end)
-    |> Enum.map(fn {symbol, condition} ->
-      Tracker.AlertMessage.message(symbol, condition)
-    end)
-    |> Tracker.Mailers.WatcherMailer.mail
-
-    {:ok, job}
   end
 
   defp get_hot_price(symbol) do

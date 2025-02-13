@@ -38,7 +38,8 @@ defmodule Tracker.MixProject do
       {:igniter, "~> 0.5"},
       {:oban, "~> 2.18"},
       {:exvcr, "~> 0.11", only: :test},
-      {:resend, "~> 0.4.0"}
+      {:resend, "~> 0.4.0"},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
     ]
   end
 end

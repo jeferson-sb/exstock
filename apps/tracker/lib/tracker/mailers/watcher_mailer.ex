@@ -3,6 +3,8 @@ defmodule Tracker.Mailers.WatcherMailer do
   @user_email Application.compile_env(:tracker, :user_email)
   @client Resend.client(api_key: @mailer_api_key)
 
+  def mail(""), do: nil
+
   def mail(message) do
     Resend.Emails.send(@client, %{
       from: "exstock@exstock.com",

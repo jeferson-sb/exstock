@@ -6,6 +6,7 @@
 Exstock is a simple elixir CLI+terminal application to watch and get alerts on stock/crypto prices periodically.
 
 **_Built with_**:
+
 - [Elixir](https://hexdocs.pm/elixir/1.18.2/Kernel.html)
 - [Ecto](https://hexdocs.pm/ecto/getting-started.html)
 - [Oban](https://hexdocs.pm/oban/Oban.html)
@@ -41,6 +42,19 @@ Install dependencies
 
 ```sh
 mix deps.get
+```
+
+Fix the issue: "could not compile dependency :ex_termbox"
+
+```sh
+cd deps/ex_termbox/c_src/termbox
+curl -L -o waf https://waf.io/waf-2.1.6
+chmod +x waf
+```
+
+Run migrations
+
+```sh
 mix ecto.migrate
 ```
 

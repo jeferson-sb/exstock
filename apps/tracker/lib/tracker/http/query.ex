@@ -70,6 +70,9 @@ defmodule Tracker.Query do
       {:ok, %{"code" => 404}} ->
         {:error, "Symbol not found"}
 
+      {:ok, %{"code" => 429}} ->
+        {:error, "Too many requests"}
+
       {:ok, decoded_body} ->
         {:ok, decoded_body}
 

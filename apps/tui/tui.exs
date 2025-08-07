@@ -24,6 +24,7 @@ defmodule Tui do
       local_time: :calendar.local_time(),
       search_term: "",
       search_results: %{},
+      error: "",
       watchlist: [],
       wallets: Tracker.Wallet.Repo.all,
       exchange_rates: [],
@@ -32,10 +33,20 @@ defmodule Tui do
     {model, update_cmd(model)}
   end
 
-  defp update_cmd(model) do
+  defp update_cmd(_model) do
     Command.batch([
-      Command.new(fn -> Watchlist.Service.execute end, :load_watchlist),
-      Command.new(fn -> ExchangeList.Service.execute end, :load_exchange_rates)
+      Command.new(fn ->
+        case Watchlist.Service.execute() do
+          {:error, reason} -> {:error, reason}
+          watchlist -> watchlist
+        end
+      end, :load_watchlist),
+      Command.new(fn ->
+        case ExchangeList.Service.execute() do
+          {:error, reason} -> {:error, reason}
+          rates -> rates
+        end
+      end, :load_exchange_rates)
     ])
   end
 
@@ -106,10 +117,28 @@ defmodule Tui do
   def update(model, msg) do
     case msg do
       {:event, %{key: @enter}} ->
-        {:ok, stats} = Tracker.Query.get_latest_symbol(model.search_term)
-        {:ok, company} = Tracker.Query.get_company_stats(model.search_term)
+        if model.search_term == "" do
+          Map.put(model, :search_results, %{})
+        else
+          {model, search_results} =
+            case Tracker.Query.get_latest_symbol(model.search_term) do
+              {:ok, stats} ->
+                {model, Map.put(model.search_results, :stats, stats)}
+              {:error, message} ->
+                {Map.put(model, :error, message), model.search_results}
+            end
 
-        Map.put(model, :search_results, %{stats: stats, company: company})
+          {model, search_results} =
+            case Tracker.Query.get_company_stats(model.search_term) do
+              {:ok, company} ->
+                {model, Map.put(search_results, :company, company)}
+              {:error, message} ->
+                {Map.put(model, :error, message), search_results}
+            end
+
+          Map.put(model, :search_results, search_results)
+        end
+
 
       {:event, %{key: key}} when key in @delete_keys ->
         current = String.slice(model.search_term, 0..-2//1)
@@ -124,11 +153,18 @@ defmodule Tui do
       {:event, %{key: @ctrl_l}} ->
         %{model | search_results: %{}, search_term: ""}
 
+      {:load_watchlist, {:error, message}} ->
+        %{model | error: message, watchlist: [] }
+
       {:load_watchlist, content} ->
         %{model | watchlist: content }
 
-      {:load_exchange_rates, content} ->
-        %{model | exchange_rates: content }
+      {:load_exchange_rates, {:error, message}} ->
+        %{model | error: message, exchange_rates: []}
+
+      {:load_exchange_rates, rates} ->
+        %{model | exchange_rates: rates}
+
 
       :tick ->
         %{model | local_time: :calendar.local_time() }
@@ -150,6 +186,9 @@ defmodule Tui do
       end
 
     view(top_bar: top_bar) do
+      if model.error != "" do
+        label(content: "⚠️ ERROR: " <> model.error, color: :red)
+      end
       label(content: "\n")
 
       row do

@@ -10,6 +10,7 @@ prompt the user for input when needed.
 > To use the database make sure you had already setup Tracker.
 
 ```bash
+cd exstock
 mix deps.get
 ```
 

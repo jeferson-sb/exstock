@@ -20,14 +20,18 @@ defmodule Tui do
   @ctrl_l Ratatouille.Constants.key(:ctrl_l)
 
   def init(_) do
+    Cache.open()
+    {:ok, watchlist} = Cache.get(:watchlist)
+    {:ok, exchange_rates} = Cache.get(:exchange_rates)
+
     model = %{
       local_time: :calendar.local_time(),
       search_term: "",
       search_results: %{},
       error: "",
-      watchlist: [],
+      watchlist: watchlist || [],
       wallets: Tracker.Wallet.Repo.all,
-      exchange_rates: [],
+      exchange_rates: exchange_rates || [],
     }
 
     {model, update_cmd(model)}
@@ -123,6 +127,7 @@ defmodule Tui do
           {model, search_results} =
             case Tracker.Query.get_latest_symbol(model.search_term) do
               {:ok, stats} ->
+                Cache.put(:stats, stats)
                 {model, Map.put(model.search_results, :stats, stats)}
               {:error, message} ->
                 {Map.put(model, :error, message), model.search_results}
@@ -131,6 +136,7 @@ defmodule Tui do
           {model, search_results} =
             case Tracker.Query.get_company_stats(model.search_term) do
               {:ok, company} ->
+                Cache.put(:company, company)
                 {model, Map.put(search_results, :company, company)}
               {:error, message} ->
                 {Map.put(model, :error, message), search_results}
@@ -154,15 +160,17 @@ defmodule Tui do
         %{model | search_results: %{}, search_term: ""}
 
       {:load_watchlist, {:error, message}} ->
-        %{model | error: message, watchlist: [] }
+        %{model | error: message }
 
       {:load_watchlist, content} ->
+        Cache.put(:watchlist, content)
         %{model | watchlist: content }
 
       {:load_exchange_rates, {:error, message}} ->
-        %{model | error: message, exchange_rates: []}
+        %{model | error: message}
 
       {:load_exchange_rates, rates} ->
+        Cache.put(:exchange_rates, rates)
         %{model | exchange_rates: rates}
 
 

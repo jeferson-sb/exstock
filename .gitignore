@@ -37,3 +37,6 @@ config/*.exs
 
 # vcr
 vcr_cassettes/
+
+# dets
+*.dets
